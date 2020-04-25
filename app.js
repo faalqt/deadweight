@@ -67,8 +67,6 @@ const mealSchema = new mongoose.Schema({
     expireAt: {type: Number}
 }, {timestamps: true});
 
-mealSchema.index({"expireAt": 1}, {expireAfterSeconds: 0});
-
 const Meal = mongoose.model("Meal", mealSchema);
 
 app.get("/", function (req, res) {
@@ -180,21 +178,27 @@ app.get("/dashboard", async function(req, res){
         var proteins = [];
         var carbs = [];
         var fats = [];
-        var meals = [];
         var calorieChart = [];
 
-        await User.findById(req.user.id, function(err, foundUser){
+        await User.findById(req.user.id, async function(err, foundUser){
             if(err){
                 console.log(err);
             } else {
                 //Sucky thing about this is that it will reset at the server time, rather than the users time, which gets screwy with people not from EST
-                if(moment(new Date, foundUser.lastAccess).isAfter(moment(new Date, foundUser.midnight))){
+                // console.log("Today: " + moment().format());
+                // console.log("Last Access " + moment(new Date(foundUser.lastAccess)));
+                // console.log("Midnight " + moment(new Date(foundUser.midnight)));
+                
+                
+                if(moment(new Date(foundUser.lastAccess)).isAfter(moment(new Date(foundUser.midnight)))){
                     foundUser.midnight = moment().endOf('day');
                     foundUser.remainingCal = foundUser.maintain_calories;
                     foundUser.currentCal *= 0;
                     foundUser.save();
 
-                    Meal.deleteMany({user: req.user.id}); 
+                    //Fix this :)
+                    await Meal.deleteMany({user: req.user.id}); 
+                    
                 }else{
                     foundUser.lastAccess = moment();
                     foundUser.save();
@@ -205,13 +209,11 @@ app.get("/dashboard", async function(req, res){
             }
         });  
 
-        await Meal.find({user: req.user.id}, function(err, foundMeals){
-            foundMeals.forEach(meal => {
-                proteins.push(meal.proteins);
-                carbs.push(meal.carbs);
-                fats.push(meal.fats);
-                meals.push(meal);
-            });
+        var meals = await Meal.find({user: req.user.id});
+        meals.forEach(meal => {
+            proteins.push(meal.proteins);
+            carbs.push(meal.carbs);
+            fats.push(meal.fats);
         });
 
         meals.sort((a, b) => (a.createdAt < b.createdAt ? 1: -1));
@@ -228,7 +230,7 @@ app.get("/logout", function(req, res){
 });
 
 var port = process.env.PORT;
-if(port ==null || port == ""){
+if(port == null || port == ""){
     port = 3000;
 }
 
