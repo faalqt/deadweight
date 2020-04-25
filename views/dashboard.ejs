@@ -1,0 +1,178 @@
+<%- include('partials/header') %> <%- include('partials/loggedIn_header') %>
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="end-wrapper col-lg-3">
+        <div class="profile-header">
+          <h1>profile</h1>
+          <hr class="line">
+          <div class="overflow-auto profile">
+            <div class="user">
+              <h4><%= user.fname + " " + user.lname%></h4>
+              <ul>
+                <li><%= user.height %> inches </li>
+                <li><%= user.weight %> lbs</li>
+                <li><%= user.age %> y/o</li>
+              </ul>
+              <h4>Calorie Information</h4>
+              <ul>
+                <li>Max: <%= user.maintain_calories %></li>
+                <li>Remaining: <%= user.remainingCal %></li>
+                <li>Eaten: <%= user.currentCal %></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="middle col-lg-6">
+        <div class="addMeal">
+          <a class="btn btn btn-primary col-lg-12 btn-lg" href="/meals" role="button">add meal</a>
+        </div>
+        <br />
+        <p></p>
+        <div class="graphs container">
+          <div class="row">
+            <div class="calories col-lg-12">
+              <canvas id="calories"></canvas>
+              <script>
+                var calorieData = "<%= calorieChart %>".split(",");
+                var calories = [];
+                calorieData.forEach((element) => {
+                  calories.push(element);
+                });
+                var ctx = document.getElementById("calories").getContext("2d");
+                var chart = new Chart(ctx, {
+                  type: "doughnut",
+                  data: {
+                    labels: ["Current", "Remaining"],
+                    datasets: [
+                      {
+                        data: calories,
+                        backgroundColor: ['rgba(235, 81, 96, 1)', 'rgba(76, 96, 133, 1)'],
+                      },
+                    ],
+                  },
+                  options: {
+                    cutoutPercentage: 30,
+                    legend: {
+                      labels: {
+                        fontColor: "white",
+                        fontSize: 17,
+                      },
+                    },
+                    title: {
+                      display: true,
+                      text: 'Calories',
+                      fontColor: 'white',
+                      fontOutline: 'blue',
+                      fontSize: 18
+                    },
+                  }
+                });
+              </script>
+            </div>
+            <div class="macros col-lg-12">
+              <canvas id="macros"></canvas>
+              <script>
+                function sum(arr) {
+                  total = 0;
+                  arr.forEach(num => {
+                    total += parseInt(num);
+                  });
+                  return total;
+                }
+                var proteinsData = "<%= proteins %>".split(",");
+                var proteins = [];
+                proteinsData.forEach((element) => {
+                  proteins.push(element);
+                });
+
+                var pNum = sum(proteins);
+
+                var carbsData = "<%= carbs %>".split(",");
+                var carbs = [];
+                carbsData.forEach((element) => {
+                  carbs.push(element);
+                });
+
+                var cNum = sum(carbs);
+
+                var fatsData = "<%= fats %>".split(',');
+                var fats = [];
+                fatsData.forEach((element) => {
+                  fats.push(element);
+                });
+
+                var fNum = sum(fats);
+
+                var ctx = document.getElementById("macros").getContext("2d");
+                var chart = new Chart(ctx, {
+                  type: "polarArea",
+                  data: {
+                    labels: ["Carbs", "Proteins", "Fats"],
+                    datasets: [{
+                      data: [cNum, pNum, fNum],
+                      backgroundColor: ['rgba(209, 79, 73, 1)', 'rgba(38, 130, 142, 1)', 'rgba(237, 181, 47, 1)'],
+                      // borderColor: ['rgb(209, 79, 73)', 'rgb(38, 130, 142)', 'rgb(237, 181, 47)']
+                    }]
+                  },
+                  options: {
+                    legend: {
+                      labels: {
+                        fontSize: 17,
+                        fontColor: 'white'
+                      }
+                    },
+                    title: {
+                      display: true,
+                      text: 'Macronutrients',
+                      fontColor: 'white',
+                      fontSize: 18
+                    },
+                    scale: {
+                      ticks: {
+                        fontColor: 'white',
+                        fontSize: 14,
+                        z: 1,
+                        backdropColor: '#12161c',
+                      },
+                      pointLabels: {
+                        fontSize: 17,
+                        fontColor: 'white' // labels around the edge like 'Running'
+                      },
+                      gridLines: {
+                        color: 'rgba(255, 255, 255, 0.4)'
+                      }
+                    }
+                  }
+                });
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="end-wrapper col-lg-3">
+        <div class="history-header">
+          <h1>history</h1>
+          <hr class="line">
+          <div class="overflow-auto history">
+            <% meals.forEach(meal => { %>
+            <div class="meal">
+              <h4><%= meal.food_name %></h4>
+              <p>
+                <ul class="food_history">
+                  <li>calories: <%= meal.calories %></li>
+                  <li>carbohydrates: <%= meal.carbs %></li>
+                  <li>proteins: <%= meal.proteins %></li>
+                  <li>fats: <%= meal.fats %></li>
+                </ul>
+              </p>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>
