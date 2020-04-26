@@ -206,6 +206,7 @@ app.get("/dashboard", async function(req, res){
             fats.push(meal.fats);
         });
 
+        //found this at https://flaviocopes.com/how-to-sort-array-of-objects-by-property-javascript/
         meals.sort((a, b) => (a.createdAt < b.createdAt ? 1: -1));
 
         res.render("dashboard", {user: req.user, calorieChart: calorieChart, fats: fats, proteins: proteins, carbs: carbs, meals: meals});      
