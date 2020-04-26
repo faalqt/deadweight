@@ -180,34 +180,24 @@ app.get("/dashboard", async function(req, res){
         var fats = [];
         var calorieChart = [];
 
-        await User.findById(req.user.id, async function(err, foundUser){
-            if(err){
-                console.log(err);
-            } else {
-                //Sucky thing about this is that it will reset at the server time, rather than the users time, which gets screwy with people not from EST
-                // console.log("Today: " + moment().format());
-                // console.log("Last Access " + moment(new Date(foundUser.lastAccess)));
-                // console.log("Midnight " + moment(new Date(foundUser.midnight)));
-                
-                
-                if(moment(new Date(foundUser.lastAccess)).isAfter(moment(new Date(foundUser.midnight)))){
-                    foundUser.midnight = moment().endOf('day');
-                    foundUser.remainingCal = foundUser.maintain_calories;
-                    foundUser.currentCal *= 0;
-                    foundUser.save();
+        var foundUser = await User.findById(req.user.id);
 
-                    //Fix this :)
-                    await Meal.deleteMany({user: req.user.id}); 
-                    
-                }else{
-                    foundUser.lastAccess = moment();
-                    foundUser.save();
-                }
+        if(moment(new Date(foundUser.lastAccess)).isAfter(moment(new Date(foundUser.midnight)))){
+            foundUser.midnight = moment().endOf('day');
+            foundUser.remainingCal = foundUser.maintain_calories;
+            foundUser.currentCal *= 0;
+            foundUser.save();
 
-                calorieChart.push(foundUser.currentCal)
-                calorieChart.push(foundUser.remainingCal);
-            }
-        });  
+            //Fix this :)
+            await Meal.deleteMany({user: req.user.id}); 
+            
+        }else{
+            foundUser.lastAccess = moment();
+            foundUser.save();
+        }
+
+        calorieChart.push(foundUser.currentCal)
+        calorieChart.push(foundUser.remainingCal);
 
         var meals = await Meal.find({user: req.user.id});
         meals.forEach(meal => {

@@ -6,6 +6,10 @@
  * Weight and Food history so you can view previous days
 
 ## Change Log
+### V1.1
+ * Added GitHub Link
+ * Fixed issue where users data wouldn't reset sometimes (Moved functions outside of callback)
+ 
 ### v1.0 (Not really 1.0 but I lost track)
  * Changed dashboard GET to have async / await working on my queries, this way all data is present when page is rendered
  * User data (and currently meals) now reset when a user access their dashboard on a new day (midnight)
