@@ -69,6 +69,11 @@ h1, h2,.homepageButtons{
     padding: 20px;
 }
 
+.fa-2x{
+    font-size: 1.35em;
+    margin-right: 15px;
+}
+
 #homepageHeader {
     background-color: transparent;
     text-align: center;
