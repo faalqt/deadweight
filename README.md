@@ -3,6 +3,8 @@ This was my senior project (also referred to as a capstone project) created usin
 
 This repo is a reupload.
 
+You can see the video presentation I made for this project [here](https://www.youtube.com/watch?v=2BEziZQ9Ljg&feature=youtu.be)
+
 ## Future Plans
  * Transition over to using React instead of EJS
  * Weight and Food history so you can view previous days
