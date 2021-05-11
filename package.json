@@ -19,7 +19,7 @@
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "mongoose": "^5.9.2",
     "mongoose-encryption": "^2.0.2",
